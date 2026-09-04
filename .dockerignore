@@ -1,0 +1,36 @@
+# Never ship secrets or local state
+.env
+.env.*
+!.env.example
+
+# Installed inside the image
+node_modules
+**/node_modules
+
+# Not needed at runtime — the web app is pre-built into apps/web/dist
+apps/web/src
+apps/web/index.html
+apps/web/dev.ts
+apps/web/build.ts
+
+# The database lives on a mounted volume, never in the image
+data
+*.db
+*.db-wal
+*.db-shm
+
+# Teacher uploads live on a mounted volume, not in the image
+apps/server/uploads/*
+!apps/server/uploads/.gitkeep
+
+# Dev-only
+.git
+.github
+.claude
+scripts
+prompts
+INIT_PROMPT.md
+**/*.test.ts
+.prettierignore
+.DS_Store
+*.log
