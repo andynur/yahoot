@@ -1458,15 +1458,15 @@ code {
  * the link. Re-enable pointer events on the anchor alone.
  */
 .site-footer a {
+  color: inherit;
   pointer-events: auto;
-  color: #fff;
   text-decoration: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
   /* Comfortable tap target on a phone without making the bar taller. */
   padding: 2px 1px;
 }
 .site-footer a:hover,
 .site-footer a:focus-visible {
+  color: #fff;
   border-bottom-color: #fff;
 }
 

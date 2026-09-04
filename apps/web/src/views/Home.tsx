@@ -10,7 +10,7 @@ export function Home() {
       <h1 className="brand">
         <span className="k">Y</span>ahoot
       </h1>
-      <p className="tagline">Host on the big screen · play on your phone</p>
+      <p className="tagline">Host on the big screen · play on your device</p>
 
       <form
         className="card stack"
