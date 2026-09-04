@@ -7,13 +7,7 @@ and watch the leaderboard move between rounds.
 Built to run a whole class on the cheapest VPS a school can rent: **one
 container, one file, no database server, no Redis.**
 
-```
-Teacher                              Students
-┌──────────────────┐                 ┌────────┐ ┌────────┐ ┌────────┐
-│  PIN  142 001    │  ◀── websocket ─┤ 🦊     │ │ 🐼     │ │ 🐯     │  … ×80
-│  Question 3 / 10 │                 └────────┘ └────────┘ └────────┘
-└──────────────────┘
-```
+![The Yahoot join screen: a game PIN field on a purple backdrop](docs/screenshot-home.webp)
 
 ## Why it is small
 
@@ -21,7 +15,7 @@ Every number below is measured, not estimated — see [Benchmarks](#benchmarks).
 
 | | |
 |---|---|
-| First load for a student | **~105 KB** over the wire (app + fonts, Brotli) |
+| First load for a student | **~107 KB** over the wire (app + font, Brotli) |
 | Container image | **116 MB** |
 | Memory, 80 players mid-game | **~80 MB** |
 | Answer round-trip, 150 simulated players | **p95 3 ms** |
@@ -80,7 +74,7 @@ bun run db:seed        # demo teacher: demo@example.com / demo1234
 bun dev
 ```
 
-Open <http://localhost:3001>. Sign in, press **Host**, and join from your phone
+Open <http://localhost:3001>. Sign in, press **Host**, and join from your device
 at `http://<your-lan-ip>:3001` with the PIN on screen.
 
 ### With Docker
@@ -112,6 +106,12 @@ See [DEPLOY.md](DEPLOY.md) for Easypanel and other hosts.
 | `WEB_ORIGIN` | `http://localhost:3001` | CORS fallback. LAN origins are reflected automatically. |
 | `NODE_ENV` | `development` | `production` tightens CORS. |
 | `AUTO_MIGRATE` | `1` | Set `0` to skip migrations on container boot. |
+
+One build-time variable, read by `bun run build:web`:
+
+| Variable | Default | Notes |
+|---|---|---|
+| `PUBLIC_URL` | — | Your public origin, e.g. `https://quiz.school.sch.id`. Rewrites the social-preview image to an absolute URL. Optional: the tags are root-relative otherwise, which nearly every scraper resolves correctly. |
 
 ## Commands
 

@@ -58,6 +58,16 @@ git add apps/web/dist && git commit
    returns `503` if it cannot be read, not just when the process is dead. The
    image already declares a Docker `HEALTHCHECK` against it.
 
+## Social preview
+
+`og:image` ships as a root-relative path, so each deployment serves its own copy
+and nothing points at somebody else's server. Most scrapers resolve that fine.
+If a stubborn one does not, rebuild with your origin:
+
+```bash
+PUBLIC_URL=https://quiz.school.sch.id bun run build:web
+```
+
 ## Deploying an update
 
 ```bash
