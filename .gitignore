@@ -1,0 +1,23 @@
+node_modules
+.env
+.env.local
+dist
+build
+
+# ...except the web production bundle, which IS deployed (see apps/web/build.ts)
+!apps/web/dist/
+!apps/web/dist/**
+*.local
+*.log
+.DS_Store
+.claude/settings.local.json
+
+# Teacher-uploaded question images (served from disk at /uploads)
+apps/server/uploads/*
+!apps/server/uploads/.gitkeep
+
+# SQLite database (accounts, quizzes, results, live state)
+data/
+*.db
+*.db-wal
+*.db-shm

@@ -1,0 +1,27 @@
+{
+  "name": "yahoot",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun --filter '*' dev",
+    "build:web": "bun --filter web build",
+    "check:web": "bun scripts/check-web-build.ts",
+    "test": "bun test",
+    "typecheck": "bunx tsc --noEmit",
+    "format": "bunx prettier --write .",
+    "db:migrate": "bun apps/server/db/migrate.ts",
+    "db:seed": "bun apps/server/db/seed.ts",
+    "loadtest": "bun scripts/loadtest.ts",
+    "audit": "bun audit",
+    "licenses": "bun pm licenses"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/bun": "latest"
+  }
+}

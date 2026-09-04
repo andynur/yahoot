@@ -1,0 +1,17 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --env-file=../../.env --watch index.ts",
+    "start": "bun --env-file=../../.env index.ts",
+    "test": "bun test",
+    "db:migrate": "bun db/migrate.ts",
+    "db:seed": "bun db/seed.ts"
+  },
+  "dependencies": {
+    "jose": "^5.9.0",
+    "zod": "^4.0.0"
+  }
+}
