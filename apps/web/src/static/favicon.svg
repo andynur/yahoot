@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Yahoot">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5a23b8"/>
+      <stop offset="1" stop-color="#46178f"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#g)"/>
+  <g transform="rotate(-3 32 32)" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="butt" stroke-linejoin="miter">
+    <path d="M19.5 19 L32 33 L44.5 19"/>
+    <path d="M32 31 L32 45.5"/>
+  </g>
+</svg>
