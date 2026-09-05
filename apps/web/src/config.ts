@@ -24,8 +24,11 @@ declare const YAHOOT_SAME_ORIGIN: boolean | undefined;
 
 const DEV_SERVER_PORT = 3020;
 
-const sameOrigin =
+/** True in a production build; false under `bun dev`. */
+export const SAME_ORIGIN =
   typeof YAHOOT_SAME_ORIGIN !== "undefined" && YAHOOT_SAME_ORIGIN === true;
+
+const sameOrigin = SAME_ORIGIN;
 
 export const API_BASE =
   window.YAHOOT_SERVER_URL ??

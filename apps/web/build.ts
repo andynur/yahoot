@@ -161,10 +161,12 @@ const STATIC_DIRS: Array<{ from: string; to: string }> = [
 /**
  * Assets that ship but that a student never downloads while joining a game:
  * the social card is fetched by scrapers, the touch icon only when someone adds
- * the game to a home screen. Counting them in the first-load figure would
- * overstate it by ~40 KB, so they are reported separately.
+ * the game to a home screen, and favicon.ico only by clients that ignore the
+ * <link> tags (crawlers, chat-app link unfurlers). Counting them in the
+ * first-load figure would overstate it by ~40 KB, so they are reported
+ * separately.
  */
-const NOT_FIRST_LOAD = /^(og-image|apple-touch-icon)\./;
+const NOT_FIRST_LOAD = /^(og-image|apple-touch-icon)\.|^favicon\.ico$/;
 
 interface StaticBytes {
   firstLoad: number;
