@@ -132,6 +132,23 @@ export interface SessionReport {
   }>;
 }
 
+/** One row of a published result page. No player id — see the server route. */
+export interface PublicResultPlayer {
+  nickname: string;
+  avatar: string;
+  score: number;
+  rank: number;
+  correctCount: number;
+}
+
+export interface PublicResults {
+  quizTitle: string;
+  theme: QuizTheme;
+  endedAt: string | null;
+  questionCount: number;
+  players: PublicResultPlayer[];
+}
+
 export const api = {
   register: (email: string, password: string) =>
     request<AuthResponse>("/api/auth/register", {
@@ -162,6 +179,21 @@ export const api = {
   listSessions: () => request<{ sessions: SessionSummary[] }>("/api/sessions"),
   getSessionReport: (id: string) =>
     request<SessionReport>(`/api/sessions/${id}/report`),
+
+  /**
+   * Publish this game's results at a public link, or return the existing one.
+   * Only valid once the game has ended.
+   */
+  shareResults: (pin: string) =>
+    request<{ token: string }>(`/api/games/${pin}/share`, { method: "POST" }),
+
+  /** Withdraw the public link. The URL stops working immediately. */
+  unshareResults: (pin: string) =>
+    request<{ ok: true }>(`/api/games/${pin}/share`, { method: "DELETE" }),
+
+  /** Read a published result page. No authentication — the token is the key. */
+  getPublicResults: (token: string) =>
+    request<PublicResults>(`/api/public/results/${encodeURIComponent(token)}`),
 
   createGame: (quizId: string) =>
     request<CreatedGame>("/api/games", {
