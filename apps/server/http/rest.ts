@@ -2,7 +2,7 @@
  * REST routes — thin. Auth, quiz CRUD, "create game" (mints a PIN + seeds the
  * live session), and results lookup. All game *play* happens over WebSocket.
  */
-import { DEFAULT_THEME } from "@shared/protocol";
+import { DEFAULT_AVATAR, DEFAULT_THEME } from "@shared/protocol";
 import { all, db, fromJson, get, nowIso, run, tx } from "../db/db";
 import { logWarn } from "../log";
 import { signTeacherToken } from "../auth/jwt";
@@ -329,6 +329,112 @@ const getResults = route<"/api/games/:pin/results">(async (req) => {
   return json({ status: session.status, endedAt: session.ended_at, results });
 });
 
+// --- public result links ----------------------------------------------------
+
+/**
+ * An unguessable, URL-safe handle for one finished session.
+ *
+ * 128 bits of randomness, so the link itself is the only credential the public
+ * page needs — there is nothing to enumerate. Base64url because the token ends
+ * up in a URL a teacher pastes into a chat app.
+ */
+function newShareToken(): string {
+  return Buffer.from(crypto.getRandomValues(new Uint8Array(16))).toString(
+    "base64url",
+  );
+}
+
+/** The session this teacher most recently hosted on that PIN. */
+function ownedSession(pin: string, teacherId: string) {
+  const session = get<any>(
+    `select id, status, share_token from game_sessions
+     where pin = ? and host_teacher_id = ?
+     order by created_at desc limit 1`,
+    pin,
+    teacherId,
+  );
+  if (!session) throw new HttpError(404, "no game with that PIN");
+  return session;
+}
+
+/**
+ * Publish a finished game's results at a public link.
+ *
+ * Opt-in on purpose: results carry every student's nickname and score, so they
+ * stay private until the teacher who ran the game asks for a link. Calling this
+ * twice returns the same token, so a host who taps Share again does not
+ * invalidate the link they already pasted somewhere.
+ */
+const createShareLink = route<"/api/games/:pin/share">(async (req) => {
+  const teacherId = await requireTeacher(req);
+  const session = ownedSession(req.params.pin, teacherId);
+  if (session.status !== "ended")
+    throw new HttpError(409, "the game has not finished yet");
+
+  if (session.share_token) return json({ token: session.share_token });
+
+  const token = newShareToken();
+  run(
+    "update game_sessions set share_token = ? where id = ?",
+    token,
+    session.id,
+  );
+  return json({ token }, 201);
+});
+
+/** Withdraw a published link. The old URL 404s immediately. */
+const revokeShareLink = route<"/api/games/:pin/share">(async (req) => {
+  const teacherId = await requireTeacher(req);
+  const session = ownedSession(req.params.pin, teacherId);
+  run("update game_sessions set share_token = null where id = ?", session.id);
+  return json({ ok: true });
+});
+
+/**
+ * The public result page's data. No authentication — the token is the capability.
+ *
+ * Deliberately omits `player_id`: it doubles as the rejoin credential during a
+ * game, so it must never appear on a page anyone can open.
+ */
+const getPublicResults = route<"/api/public/results/:token">(async (req) => {
+  const session = get<any>(
+    `select gs.id, gs.ended_at, q.title as quiz_title, q.theme
+     from game_sessions gs
+     join quizzes q on q.id = gs.quiz_id
+     where gs.share_token = ?`,
+    req.params.token,
+  );
+  if (!session) throw new HttpError(404, "no shared result at this link");
+
+  const rows = all<any>(
+    `select nickname, avatar, final_score, final_rank, correct_count, answers
+     from game_results where session_id = ? order by final_rank`,
+    session.id,
+  );
+
+  // How many questions were actually played, counted from the answer logs —
+  // the quiz may have been edited or deleted since the game ran.
+  const played = new Set<string>();
+  for (const row of rows)
+    for (const a of fromJson<LoggedAnswer[]>(row.answers, []))
+      played.add(a.questionId);
+
+  return json({
+    quizTitle: session.quiz_title,
+    theme: fromJson(session.theme, DEFAULT_THEME),
+    endedAt: session.ended_at,
+    questionCount: played.size,
+    players: rows.map((r: any) => ({
+      nickname: r.nickname,
+      // Rows written before avatars were persisted stored an empty string.
+      avatar: r.avatar || DEFAULT_AVATAR,
+      score: r.final_score,
+      rank: r.final_rank,
+      correctCount: r.correct_count,
+    })),
+  });
+});
+
 // --- reports ---------------------------------------------------------------
 
 /** Past sessions this teacher hosted, newest first. */
@@ -509,6 +615,8 @@ export function makeRoutes() {
     "/api/quizzes/:id": { GET: getQuiz, PUT: updateQuiz, DELETE: deleteQuiz },
     "/api/games": { POST: createGame },
     "/api/games/:pin/results": { GET: getResults },
+    "/api/games/:pin/share": { POST: createShareLink, DELETE: revokeShareLink },
+    "/api/public/results/:token": { GET: getPublicResults },
     "/api/sessions": { GET: listSessions },
     "/api/sessions/:id/report": { GET: getSessionReport },
     ...uploadRoutes,

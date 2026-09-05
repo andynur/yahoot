@@ -520,6 +520,7 @@ export async function endGame(pin: string): Promise<void> {
       session_id: snap.sessionId,
       player_id: row.playerId,
       nickname: row.nickname,
+      avatar: row.avatar,
       final_score: row.score,
       final_rank: row.rank,
       correct_count: correct[row.playerId] ?? 0,
@@ -532,13 +533,14 @@ export async function endGame(pin: string): Promise<void> {
       for (const row of resultRows) {
         run(
           `insert into game_results
-             (id, session_id, player_id, nickname, final_score, final_rank,
-              correct_count, answers)
-           values (?, ?, ?, ?, ?, ?, ?, ?)`,
+             (id, session_id, player_id, nickname, avatar, final_score,
+              final_rank, correct_count, answers)
+           values (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           crypto.randomUUID(),
           row.session_id,
           row.player_id,
           row.nickname,
+          row.avatar,
           row.final_score,
           row.final_rank,
           row.correct_count,
