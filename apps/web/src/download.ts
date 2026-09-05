@@ -1,10 +1,6 @@
-/** Hand the browser a generated file (CSV exports, the import template). */
-export function downloadText(
-  filename: string,
-  text: string,
-  mime = "text/csv;charset=utf-8",
-): void {
-  const url = URL.createObjectURL(new Blob([text], { type: mime }));
+/** Hand the browser a generated file (CSV exports, the podium image). */
+export function downloadBlob(filename: string, blob: Blob): void {
+  const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
@@ -13,6 +9,14 @@ export function downloadText(
   a.remove();
   // give the click a tick before the blob goes away
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export function downloadText(
+  filename: string,
+  text: string,
+  mime = "text/csv;charset=utf-8",
+): void {
+  downloadBlob(filename, new Blob([text], { type: mime }));
 }
 
 /** Quote a value for CSV output. */

@@ -1052,7 +1052,7 @@ button.answer:active {
 
 /* Quiz backdrops ------------------------------------------------------------ */
 /* Set on <body> by useQuizTheme so the projector is themed edge to edge.
-   Keep these gradients in sync with THEME_SWATCH in theme.ts. */
+   Keep these gradients in sync with THEME_SWATCH in themePresets.ts. */
 
 body[data-theme="midnight"] {
   background:
@@ -1484,4 +1484,99 @@ code {
 .upload-note {
   font-size: 0.8rem;
   margin: 0;
+}
+
+/* Sharing the final result ---------------------------------------------- */
+
+.btn.sm {
+  font-size: 0.85rem;
+  padding: 9px 14px;
+  box-shadow: 0 3px 0 var(--btn-shadow);
+}
+.btn.sm:active {
+  transform: translateY(3px);
+}
+
+.share-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: min(560px, 92vw);
+  text-align: center;
+}
+
+.share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.share-note {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.share-note.is-error {
+  color: #ffd9d9;
+}
+
+/* Confirmation that what got copied is what the teacher expected. */
+.share-preview {
+  width: min(420px, 88vw);
+  border-radius: 10px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+}
+
+.share-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.share-link-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* A long token must wrap rather than push the panel wider than the screen. */
+.share-link a {
+  color: #fff;
+  font-weight: 700;
+  word-break: break-all;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.share-link-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* The published result page --------------------------------------------- */
+
+.public-results {
+  width: min(720px, 94vw);
+  margin: 0 auto;
+  gap: 18px;
+  /* Bottom padding clears the fixed site footer, as .screen does. */
+  padding: 24px 0 64px;
+}
+
+.public-results .panel {
+  width: 100%;
 }

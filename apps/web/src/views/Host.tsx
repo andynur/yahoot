@@ -4,6 +4,7 @@ import { Confetti } from "../components/Confetti";
 import { Leaderboard } from "../components/Leaderboard";
 import { Media } from "../components/Media";
 import { Podium } from "../components/Podium";
+import { ShareResult } from "../components/ShareResult";
 import { FloatingReactions } from "../components/Reactions";
 import { Shape, SHAPE_NAMES } from "../components/Shape";
 import { SoundToggle } from "../components/SoundToggle";
@@ -277,6 +278,7 @@ function HostGame({
           <h2 className="huge on-purple pop-in">🎉 Podium</h2>
           <Podium rows={game.leaderboard} />
           <p className="on-purple">Results saved.</p>
+          <ShareResult pin={pin} />
           <button className="btn ghost lg" onClick={onExit}>
             Back to dashboard
           </button>
