@@ -49,6 +49,21 @@ room downloads stays a few hundred KB no matter what the client sent. The
 browser downscales first (`apps/web/src/image.ts`); the server is the guarantee,
 not the optimisation.
 
+## Sharing results
+
+A finished session can be published at `/r/<token>` — a 128-bit token on
+`game_sessions.share_token`, minted only when the host asks (`POST
+/api/games/:pin/share`) and cleared by `DELETE`. `GET /api/public/results/:token`
+is the one unauthenticated read in the app; it must never return `player_id`,
+which doubles as a rejoin credential during play.
+
+The podium image is drawn on a canvas in `apps/web/src/shareCard.ts`, not
+screenshotted — no DOM-to-image dependency, and the card is composed for a chat
+window. `apps/web/src/clipboard.ts` writes it: `navigator.clipboard` is absent on
+a plain http:// origin, which is exactly how a teacher runs this on the school
+LAN, so the text path falls back to `execCommand` and the image falls back to a
+download. Do not "simplify" that away.
+
 ## Monorepo
 
 - `apps/server` — one Bun.serve: REST + WebSocket + game engine + `/uploads`,

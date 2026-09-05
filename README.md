@@ -15,7 +15,7 @@ Every number below is measured, not estimated — see [Benchmarks](#benchmarks).
 
 | | |
 |---|---|
-| First load for a student | **~107 KB** over the wire (app + font, Brotli) |
+| First load for a student | **~110 KB** over the wire (app + font, Brotli) |
 | Container image | **116 MB** |
 | Memory, 80 players mid-game | **~80 MB** |
 | Answer round-trip, 150 simulated players | **p95 3 ms** |
@@ -37,6 +37,8 @@ hashing, image processing and the bundler are all built in.
 - Import questions from CSV
 - Host view for the projector: PIN, live answer count, reveal, leaderboard
 - Per-session reports, exportable as CSV
+- Share the final podium: one press copies a ready-made image plus a text recap
+  and publishes the scoreboard at a public link
 
 **For students**
 
@@ -44,6 +46,7 @@ hashing, image processing and the bundler are all built in.
 - Nickname is optional; skip it and get a random one
 - Pick an animal avatar
 - Speed-weighted scoring, rank-change arrows (▲3 / ▼1), emoji reactions, podium
+- Look the scoreboard up again later from the link the teacher shared
 
 **For whoever runs it**
 
@@ -152,6 +155,19 @@ A few rules the code holds to, because the game breaks in subtle ways otherwise:
 5. **Zod never reaches the browser.** The client imports runtime values from
    `@shared/wire` and types with `import type`; the build fails if a value import
    drags Zod back in.
+
+### Sharing a result
+
+When a game ends the host can publish its scoreboard at an unguessable URL
+(`/r/<token>`) and copy a podium image drawn on a canvas — no screenshot library,
+and composed for a chat window rather than a projector. The picture and a short
+text recap go on the clipboard together: paste once into the message box for the
+image, again into the caption field for the recap and the link.
+
+Publishing is opt-in and reversible. A result page carries every student's
+nickname and score, so nothing is reachable until the teacher who ran the game
+asks for a link, and "Stop sharing" kills it immediately. The page itself never
+exposes player ids — during a game an id doubles as a rejoin credential.
 
 Video is YouTube-only by design: a self-hosted clip would stream from the same
 box that is running the game, to every phone in the room at once. Uploaded
